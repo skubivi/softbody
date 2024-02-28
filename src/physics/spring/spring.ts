@@ -1,39 +1,46 @@
-import { MINIMAL_DEFORM_AMOUNT } from "../../utils/constants";
+import { DAMPING, MINIMAL_DEFORM_AMOUNT } from "../../utils/constants";
 import { Particle } from "../particle/particle";
 import { Vector } from "../vector/vector";
 
 export class Spring {
-    particleA: Particle;
-    particleB: Particle;
-    restLength: number;
-    stiffness: number;
-    damping: number;
-    constructor(particleA: Particle, particleB: Particle, restLength: number, stiffness: number) {
-        this.particleA = particleA
-        this.particleB = particleB
-        this.restLength = restLength
-        this.stiffness = stiffness
-        this.damping = 0.5
+    private _particleA: Particle;
+    private _particleB: Particle;
+    private _restLength: number;
+    private _stiffness: number;
+    private _damping: number;
+    constructor(particleA: Particle, particleB: Particle, stiffness: number) {
+        this._particleA = particleA
+        this._particleB = particleB
+        this._restLength = Vector.sub(this._particleA, this._particleB).getRadius()
+        this._stiffness = stiffness
+        this._damping = DAMPING
     }
 
-    computeForce() {
-        const d = Vector.sub(this.particleA, this.particleB)
+    private _computeForce() {
+        const d = Vector.sub(this._particleA, this._particleB)
         const distance = d.getRadius()
-        const deformAmount = distance - this.restLength
+        const deformAmount = distance - this._restLength
         if (Math.abs(deformAmount) < MINIMAL_DEFORM_AMOUNT) return new Vector()
-        const restorativeForce = this.stiffness * deformAmount
+        const restorativeForce = this._stiffness * deformAmount
         return Vector.multiplyByNumber(Vector.divideByNumber(d, distance), restorativeForce)
     }
-    computeDampingForce() {
-        return Vector.multiplyByNumber(Vector.sub(this.particleA.getVelocity(), this.particleB.getVelocity()), this.damping)
+    private _computeDampingForce() {
+        return Vector.multiplyByNumber(Vector.sub(this._particleA.getVelocity(), this._particleB.getVelocity()), this._damping)
     }
 
-    update() {
-        const f = this.computeForce()
-        const dampingForce = this.computeDampingForce()
+    addForceToParticles() {
+        const f = this._computeForce()
+        const dampingForce = this._computeDampingForce()
         const resultForce = Vector.add(f, dampingForce)
 
-        this.particleA.addForce(Vector.multiplyByNumber(resultForce, -1))
-        this.particleB.addForce(resultForce)
+        this._particleA.addForce(Vector.multiplyByNumber(resultForce, -1))
+        this._particleB.addForce(resultForce)
+    }
+
+    getCoordinates() {
+        return {
+            a: this._particleA.getPos(),
+            b: this._particleB.getPos()
+        }
     }
 }
