@@ -75,7 +75,14 @@ export class Vector {
         resultVector.divideByNumber(n)
         return resultVector
     }
-
+    static getDotProduct(vector1: TVector, vector2: TVector) {
+        const tempVector = new Vector(vector1)
+        return tempVector.getDotProduct(vector2)
+    }
+    static getCosAngleBetweenVectors(vector1: TVector, vector2: TVector) {
+        const tempVector = new Vector(vector1)
+        return tempVector.getCosAngleBetweenVectors(vector2)
+    }
     getRadius() {
         return this._r
     }
@@ -118,45 +125,19 @@ export class Vector {
     }
 
     add(options: TVector) {
-        if (typeof options === 'undefined') {
-            return
-        }
-        if (typeof options === 'number') {
-            this.setXY(this.getX() + options, this.getY() + options)
-            return
-        }
-        if (Array.isArray(options)) {
-            if (options.length === 0) {
-                return
-            }
-            if (options.length === 1) {
-                this.setXY(this.getX() + options[0], this.getY() + options[0])
-                return
-            }
-            this.setXY(this.getX() + options[0], this.getY() + options[1])
-            return
-        }
-        this.setXY(this.getX() + options.getX(), this.getY() + options.getY())
+        const anotherVector = new Vector(options)
+        this.setXY(this.getX() + anotherVector.getX(), this.getY() + anotherVector.getY())
     }
     sub(options: TVector) {
-        if (typeof options === 'undefined') {
-            return
-        }
-        if (typeof options === 'number') {
-            this.setXY(this.getX() - options, this.getY() - options)
-            return
-        }
-        if (Array.isArray(options)) {
-            if (options.length === 0) {
-                return
-            }
-            if (options.length === 1) {
-                this.setXY(this.getX() - options[0], this.getY() - options[0])
-                return
-            }
-            this.setXY(this.getX() - options[0], this.getY() - options[1])
-            return
-        }
-        this.setXY(this.getX() - options.getX(), this.getY() - options.getY())
+        const anotherVector = new Vector(options)
+        this.setXY(this.getX() - anotherVector.getX(), this.getY() - anotherVector.getY())
+    }
+    getDotProduct(options: TVector) {
+        const anotherVector = new Vector(options)
+        return this.getX() * anotherVector.getX() + this.getY() * anotherVector.getY()
+    }
+    getCosAngleBetweenVectors(options: TVector) {
+        const anotherVector = new Vector(options)
+        return this.getDotProduct(anotherVector) / (this.getRadius() * anotherVector.getRadius())
     }
 }
