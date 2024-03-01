@@ -1,6 +1,6 @@
 import { DAMPING, MINIMAL_DEFORM_AMOUNT } from "../../utils/constants";
 import { Particle } from "../particle/particle";
-import { Vector } from "../vector/vector";
+import { Vector } from "../../math/vector/vector";
 
 export class Spring {
     private _particleA: Particle;

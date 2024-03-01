@@ -5,8 +5,10 @@ import { Particle } from './physics/particle/particle'
 import { DELTA_TIME } from './utils/constants'
 import ParticleComponent from './components/particle-components'
 import SpringComponent from './components/spring-component'
-import { Sle } from './physics/sle/sle'
-import { Vector } from './physics/vector/vector'
+import { Sle } from './math/sle/sle'
+import { Vector } from './math/vector/vector'
+import { LineEquation } from './math/line-equation/line-equation'
+import { Ray } from './math/ray/ray'
 
 function App() {
   // const particles: Particle[] = []
@@ -23,20 +25,31 @@ function App() {
   // const springsJSX = springsCoordinate.map((spring, index) => {
   //   <SpringComponent {...spring} height={window.innerHeight} key={index}/>
   // })
-  const vector1 = new Vector([-1, -1])
-  const position1 = {
-    x: 0,
-    y: 0
-  }
-  const vector2 = new Vector([14, -1])
-  const position2 = {
+  const line1 = LineEquation.getLineEquationFromTwoPoints({
+    x: 2,
+    y: 4
+  }, {
+    x: 3,
+    y: 5
+  })
+  const line2 = LineEquation.getLineEquationFromTwoPoints({
+    x: 5,
+    y: 1
+  }, {
     x: 7,
-    y: 8
+    y: 2
+  })
+  const startingPoint = {
+    x: 1,
+    y: 1
   }
-  const sle = Sle.getSleFromTwoVectors(vector1, vector2, position1, position2)
-  console.log(sle.solve());
+  const vector = new Vector([-3, 1])
+  const ray = new Ray({
+    startingPoint,
+    vector
+  })
+  console.log(ray.isCrossingLine(line1))
   
-
   return (
     <Stage 
       width={window.innerWidth} 

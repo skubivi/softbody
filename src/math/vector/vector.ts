@@ -1,4 +1,4 @@
-import { Particle } from "../particle/particle"
+import { Particle } from "../../physics/particle/particle"
 
 export type TVector = Vector | number[] | number | undefined | Particle
 

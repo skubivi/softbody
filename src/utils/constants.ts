@@ -1,4 +1,4 @@
-import { Vector } from "../physics/vector/vector"
+import { Vector } from "../math/vector/vector"
 
 export const G = 0.1
 export const gravityForce = new Vector([0, -G])

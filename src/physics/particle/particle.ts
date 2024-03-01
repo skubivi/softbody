@@ -1,5 +1,5 @@
 import { gravityForce } from "../../utils/constants"
-import { TVector, Vector } from "../vector/vector"
+import { TVector, Vector } from "../../math/vector/vector"
 
 export class Particle {
     private _pos: number[]
