@@ -37,9 +37,7 @@ This project allows you to look at the simulation of softbody, and nothing more
 ### Components:
 
 - **-** **`<ParticleComponent particle: {x: number, y: number, r: number} height: number/>`** - Drawing Particle on canvas. Set particle from field particleComponents of softbody hook. Set height of canvas in height.
-- 
 - **-** **`<SpringComponent spring: {a: Point, b: Point} height: number/>`** - Drawing connection in softbody on canvas. Set spring from springsComponents of softbody hook. Set height of canvas in height.
-- 
 - **-** **`<SpringComponent collision: Collision height: number/>`** - Drawing collision on canvas. Set collision from object. Set height of canvas in height.
 
 ## Developers
