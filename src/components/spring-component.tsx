@@ -4,20 +4,21 @@ import { TENSION } from "../utils/constants";
 import { Point } from "../math/point/point";
 
 interface ISpringComponent {
-    a: Point
-    b: Point
+    spring: {
+        a: Point,
+        b: Point
+    }
     height: number
 }
 
 const SpringComponent: FC<ISpringComponent> = ({
-    a,
-    b,
+    spring,
     height
 }) => {
-    const x1 = Math.round(a.getX())
-    const y1 = Math.round(height - a.getY())
-    const x2 = Math.round(b.getX() - a.getX())
-    const y2 = Math.round(a.getY() - b.getY())
+    const x1 = Math.round(spring.a.getX())
+    const y1 = Math.round(height - spring.a.getY())
+    const x2 = Math.round(spring.b.getX() - spring.a.getX())
+    const y2 = Math.round(spring.a.getY() - spring.b.getY())
     return (
         <Line
             x={x1}

@@ -82,11 +82,11 @@ function App() {
   const {particlesCoordinate, springsCoordinate} = useSoftbody(softbody, [testCollision1])
   
   const particlesJSX = particlesCoordinate.map((particle, index) => {
-    return <ParticleComponent {...particle} height={window.innerHeight} key={index}/>
+    return <ParticleComponent particle={particle} height={window.innerHeight} key={index}/>
   })
   
   const springsJSX = springsCoordinate.map((spring, index) => {
-    return <SpringComponent {...spring} height={window.innerHeight} key={index}/>
+    return <SpringComponent spring={spring} height={window.innerHeight} key={index}/>
   })
   
   return (
