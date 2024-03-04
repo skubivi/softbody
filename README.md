@@ -44,7 +44,7 @@ This project allows you to look at the simulation of softbody, and nothing more
 
 ## Developers
 
-- [skubivi](GitHub Profile Link)
+- [skubivi](https://github.com/skubivi)
 
 ## License
 
