@@ -1,6 +1,9 @@
 import { Particle } from "../../physics/particle/particle"
+import { round } from "../../utils/functions"
+import { Point } from "../point/point"
+import { SectorLine } from "../sector-line/sector-line"
 
-export type TVector = Vector | number[] | number | undefined | Particle
+export type TVector = Vector | number[] | number | undefined | Particle | Point | SectorLine
 
 export class Vector {
     private _x!: number
@@ -28,11 +31,18 @@ export class Vector {
             this.copy(options)
         }
     }
-    copy(options: Vector | Particle) {
+    copy(options: Vector | Particle | Point | SectorLine) {
         if (options instanceof Vector) {
             this._x = options.getNormalX()
             this._y = options.getNormalY()
             this._r = options.getRadius()
+        }
+        else if (options instanceof SectorLine) {
+            const x1 = options.getPoint1().getX()
+            const x2 = options.getPoint2().getX()
+            const y1 = options.getPoint1().getY()
+            const y2 = options.getPoint2().getY()
+            this.setXY(x2 - x1, y2 - y1)
         }
         else {
             this.setXY(options.getX(), options.getY())
@@ -40,13 +50,15 @@ export class Vector {
         
     }
     setXY(newX: number, newY: number) {
-        this._r = Math.sqrt(newX * newX + newY * newY)
+        const tempX = round(newX)
+        const tempY = round(newY)
+        this._r = Math.sqrt(tempX * tempX + tempY * tempY)
         if (this._r === 0) {
             this._x = 0,
             this._y = 0
         } else {
-            this._x = newX / this._r
-            this._y = newY / this._r
+            this._x = tempX / this._r
+            this._y = tempY / this._r
         }
     }
     clearVector() {
@@ -75,6 +87,10 @@ export class Vector {
         resultVector.divideByNumber(n)
         return resultVector
     }
+    static reflect(vector1: TVector, vector2: TVector) {
+        const resultVector = new Vector(vector1)
+        return resultVector.reflect(vector2)
+    }
     static getDotProduct(vector1: TVector, vector2: TVector) {
         const tempVector = new Vector(vector1)
         return tempVector.getDotProduct(vector2)
@@ -83,6 +99,7 @@ export class Vector {
         const tempVector = new Vector(vector1)
         return tempVector.getCosAngleBetweenVectors(vector2)
     }
+    
     getRadius() {
         return this._r
     }
@@ -111,17 +128,21 @@ export class Vector {
     }
 
     getXY() {
-        return [this.getX(), this.getY()]
+        return new Point(this.getX(), this.getY())
     }
     getNormalXY() {
-        return [this.getNormalX(), this.getNormalY()]
+        return new Point (this.getNormalX(), this.getNormalY())
     }
 
     multiplyByNumber(n: number) {
         this.setRadius(this.getRadius() * n)
     }
     divideByNumber(n: number) {
-        this.setRadius(this.getRadius() / n)
+        let tempN = n
+        if (n === 0) {
+            tempN = 0.001
+        }
+        this.setRadius(this.getRadius() / tempN)
     }
 
     add(options: TVector) {
@@ -139,5 +160,15 @@ export class Vector {
     getCosAngleBetweenVectors(options: TVector) {
         const anotherVector = new Vector(options)
         return this.getDotProduct(anotherVector) / (this.getRadius() * anotherVector.getRadius())
+    }
+
+    reflect(options: TVector) {
+        const lineVector = new Vector(options)
+        lineVector.setRadius(1)
+        let projectionOnSector = this.getCosAngleBetweenVectors(lineVector) * this.getRadius()
+        if (Number.isNaN(projectionOnSector)) return new Vector(this)
+        lineVector.multiplyByNumber(projectionOnSector)
+        const projectionVector = Vector.sub(lineVector, this)
+        return Vector.add(projectionVector, lineVector)
     }
 }

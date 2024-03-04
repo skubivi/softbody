@@ -1,4 +1,5 @@
-import { SectorLine } from "../sector-line/sectot-line"
+import { Point } from "../point/point"
+import { SectorLine } from "../sector-line/sector-line"
 import { Vector } from "../vector/vector"
 
 type TLineEquation = {
@@ -26,28 +27,18 @@ export class LineEquation {
         return this._z
     }
 
-    static getLineEquationFromTwoPoints(point1: {x: number, y: number}, point2: {x: number, y: number}) {
-        const x = point2.x === point1.x ? 1 : (point1.y - point2.y) / (point2.x - point1.x)
-        const y = point2.x === point1.x ? 0 : 1
-        const z = point2.x === point1.x ? point1.x : -(point2.x * point1.y - point1.x * point2.y) / (point1.x - point2.x)
+    static getLineEquationFromTwoPoints(point1: Point, point2: Point) {
+        const check = point2.getX() === point1.getX()
+        const x = check ? 1 : (point1.getY() - point2.getY()) / (point2.getX() - point1.getX())
+        const y = check ? 0 : 1
+        const z = check ? point1.getX() : -(point2.getX() * point1.getY() - point1.getX() * point2.getY()) / (point1.getX() - point2.getX())
         return new LineEquation({x, y, z})
     }
-    static getLineEquationFromPointAndVector(point: {x: number, y: number}, vector: Vector) {
-        const newPoint = {
-            x: point.x + vector.getX(),
-            y: point.y + vector.getY()
-        }
+    static getLineEquationFromPointAndVector(point: Point, vector: Vector) {
+        const newPoint = new Point(point.getX() + vector.getX(), point.getY() + vector.getY())
         return this.getLineEquationFromTwoPoints(point, newPoint)
     }
     static getLineEquationFromSectorLine(sectorLine: SectorLine) {
-        const point1 = {
-            x: sectorLine.getX1(),
-            y: sectorLine.getY1()
-        }
-        const point2 = {
-            x: sectorLine.getX2(),
-            y: sectorLine.getY2()
-        }
-        return this.getLineEquationFromTwoPoints(point1, point2)
+        return this.getLineEquationFromTwoPoints(sectorLine.getPoint1(), sectorLine.getPoint2())
     }
 }

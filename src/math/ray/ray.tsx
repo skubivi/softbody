@@ -1,30 +1,26 @@
+import { Collision } from "../../physics/colission/colission"
 import { LineEquation } from "../line-equation/line-equation"
-import { SectorLine } from "../sector-line/sectot-line"
+import { Point } from "../point/point"
+import { SectorLine } from "../sector-line/sector-line"
 import { Sle } from "../sle/sle"
 import { Vector } from "../vector/vector"
 
 export type TRay = {
-    startingPoint: {
-        x: number,
-        y: number
-    }
+    startingPoint: Point
     vector: Vector
 }
 
 export type TRayCrossing = {
     isCrossing: boolean
-    crossingPoint: {
-        x: number,
-        y: number
-    }
+    crossingPoint: Point
 }
 
 export class Ray {
-    private _startingPoint: { x: number; y: number }
+    private _startingPoint: Point
     private _vector: Vector
-    constructor(options: TRay) {
-        this._startingPoint = options.startingPoint
-        this._vector = options.vector
+    constructor(startingPoint: Point, vector: Vector) {
+        this._startingPoint = startingPoint
+        this._vector = vector
     }
     isCrossingLine(line: LineEquation) {
         const crossingPoint = Sle.getSleFromTwoLineEquations(
@@ -33,46 +29,50 @@ export class Ray {
         ).solve()
         const result: TRayCrossing = {
             isCrossing: false,
-            crossingPoint: {
-                x: NaN,
-                y: NaN
-            }
+            crossingPoint: new Point(NaN, NaN)
         }
         if (crossingPoint === undefined) return result
         const right = this._vector.getNormalX() > 0
         const top = this._vector.getNormalY() > 0
         if (right)
-            if (crossingPoint[0] < this._startingPoint.x) return result
+            if (crossingPoint[0] < this._startingPoint.getX()) return result
         if (top)
-            if (crossingPoint[1] < this._startingPoint.y) return result
+            if (crossingPoint[1] < this._startingPoint.getY()) return result
         result.isCrossing = true
-        result.crossingPoint = {
-            x: crossingPoint[0],
-            y: crossingPoint[1]
-        }
+        result.crossingPoint.setXY(crossingPoint[0], crossingPoint[1])
         return result
     }
     isCrossingSectorLine(sectorLine: SectorLine) {
         const lineFromSectorLine = LineEquation.getLineEquationFromSectorLine(sectorLine)
         const result = this.isCrossingLine(lineFromSectorLine)
-        const minX = Math.min(sectorLine.getX1(), sectorLine.getX2())
-        const maxX = Math.max(sectorLine.getX1(), sectorLine.getX2())
-        const minY = Math.min(sectorLine.getY1(), sectorLine.getY2())
-        const maxY = Math.max(sectorLine.getY1(), sectorLine.getY2())
+        if (!result.isCrossing) return result
+        const minX = Math.min(sectorLine.getPoint1().getX(), sectorLine.getPoint2().getX())
+        const maxX = Math.max(sectorLine.getPoint1().getX(), sectorLine.getPoint2().getX())
+        const minY = Math.min(sectorLine.getPoint1().getY(), sectorLine.getPoint2().getY())
+        const maxY = Math.max(sectorLine.getPoint1().getY(), sectorLine.getPoint2().getY())
         if (
             !(
-                result.crossingPoint.x >= minX && 
-                result.crossingPoint.x <= maxX && 
-                result.crossingPoint.y >= minY && 
-                result.crossingPoint.y <= maxY
+                result.crossingPoint.getX() >= minX && 
+                result.crossingPoint.getX() <= maxX && 
+                result.crossingPoint.getY() >= minY && 
+                result.crossingPoint.getY() <= maxY
             )
         ) {
             result.isCrossing = false
-            result.crossingPoint = {
-                x: NaN,
-                y: NaN
-            }
+            result.crossingPoint.setXY(NaN, NaN)
         }
         return result
+    }
+    getCrossingPointWithColission(collision: Collision, n: number) {
+        const tempSectorLine = collision.getSectorLines()[n]
+        const tempCrossingPoint = this.isCrossingSectorLine(tempSectorLine)
+        if (tempCrossingPoint.isCrossing) {
+            return {
+                point: tempCrossingPoint.crossingPoint,
+                sectorLine: tempSectorLine,
+                elasticity: collision.getElasticity()
+            }
+        }
+        return undefined
     }
 }

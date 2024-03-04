@@ -1,3 +1,4 @@
+import { Collision } from "../colission/colission";
 import { Particle } from "../particle/particle";
 import { Spring } from "../spring/spring";
 
@@ -14,23 +15,36 @@ export class Softbody {
         })
     }
     
-    updatePosition(deltaTime: number) {
+    updatePosition(collisions: Collision[], deltaTime: number) {
         this._springs.forEach(spring => {
             spring.addForceToParticles()
-        })
-        this._particles.forEach(particle => {
-            particle.updatePosWithClearForce(deltaTime)
         })
         this._particles.forEach(particle => {
             particle.addGravityForce()
         })
         this._particles.forEach(particle => {
-            particle.updatePosWithClearForce(deltaTime)
+            particle.updateVelocity(deltaTime)
+        })
+        this._springs.forEach(spring => {
+            spring.addDampingForceToParticles()
+        })
+        this._particles.forEach(particle => {
+            particle.updateVelocity(deltaTime)
+        })
+        this._particles.forEach(particle => {
+            particle.updatePos(collisions, deltaTime)
         })
     }
 
     getParticlesCoordinates() {
-        return this._particles.map(particle => particle.getPos())
+        return this._particles.map(particle => {
+            return {
+                x: particle.getPos().getX(),
+                y: particle.getPos().getY(),
+                r: particle.getRadius()
+            }
+            
+        })
     }
 
     getSpringsCoordinates() {

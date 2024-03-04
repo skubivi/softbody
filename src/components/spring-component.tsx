@@ -1,16 +1,11 @@
 import { FC } from "react";
 import { Line } from "react-konva";
 import { TENSION } from "../utils/constants";
+import { Point } from "../math/point/point";
 
 interface ISpringComponent {
-    a: {
-        x: number
-        y: number
-    }
-    b: {
-        x: number
-        y: number
-    }
+    a: Point
+    b: Point
     height: number
 }
 
@@ -19,10 +14,10 @@ const SpringComponent: FC<ISpringComponent> = ({
     b,
     height
 }) => {
-    const x1 = a.x
-    const y1 = height - a.y
-    const x2 = b.x - a.x
-    const y2 = a.y - b.y
+    const x1 = Math.round(a.getX())
+    const y1 = Math.round(height - a.getY())
+    const x2 = Math.round(b.getX() - a.getX())
+    const y2 = Math.round(a.getY() - b.getY())
     return (
         <Line
             x={x1}

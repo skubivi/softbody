@@ -30,11 +30,15 @@ export class Spring {
 
     addForceToParticles() {
         const f = this._computeForce()
-        const dampingForce = this._computeDampingForce()
-        const resultForce = Vector.add(f, dampingForce)
 
-        this._particleA.addForce(Vector.multiplyByNumber(resultForce, -1))
-        this._particleB.addForce(resultForce)
+        this._particleA.addForce(Vector.multiplyByNumber(f, -1))
+        this._particleB.addForce(f)
+    }
+
+    addDampingForceToParticles() {
+        const dampingForce = this._computeDampingForce()
+        this._particleA.addForce(Vector.multiplyByNumber(dampingForce, -1))
+        this._particleB.addForce(dampingForce)
     }
 
     getCoordinates() {
