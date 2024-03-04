@@ -9,9 +9,7 @@ import CollisionComponent from './components/collision-component'
 import SpringComponent from './components/spring-component'
 
 function App() {
-  const particles: Particle[] = [
-    // new Particle([400, 500], 2, 10)
-  ]
+  const particles: Particle[] = []
   for (let i = 0; i < 6; i++) {
     particles.push(new Particle([100 + (i % 3) * 30, 500 + Math.floor(i / 3) * 30], 2, 10))
   }
@@ -81,14 +79,10 @@ function App() {
     new Point(window.innerWidth * 2 / 3, 100),
     new Point(window.innerWidth, 500)
   ], 1)
-  const testCollision2 = new Collision([
-    new Point(window.innerWidth / 3, 0),
-    new Point(window.innerWidth / 5, window.innerHeight)
-  ], 0)
   const {particlesCoordinate, springsCoordinate} = useSoftbody(softbody, [testCollision1])
   
   const particlesJSX = particlesCoordinate.map((particle, index) => {
-    return <ParticleComponent x={particle.x} y={particle.y} r={particle.r} height={window.innerHeight} key={index}/>
+    return <ParticleComponent {...particle} height={window.innerHeight} key={index}/>
   })
   
   const springsJSX = springsCoordinate.map((spring, index) => {
